@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Pago Móvil - ISP</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Glow Elements -->
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <div class="container">
+        <!-- Card Container -->
+        <div class="card" id="formCard">
+            <div class="card-header">
+                <div class="logo">
+                    <i class="fa-solid fa-wifi-strong"></i>
+                    <span>ISP Connect</span>
+                </div>
+                <h1>Reportar Pago Móvil</h1>
+                <p>Completa el formulario con los detalles del pago de tu contrato de internet.</p>
+            </div>
+
+            <!-- Form -->
+            <form id="paymentForm" novalidate>
+                <!-- Nombre y Apellido -->
+                <div class="form-group">
+                    <label for="nombre">Nombre y Apellido del Titular</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-user input-icon"></i>
+                        <input type="text" id="nombre" name="nombre" placeholder="Ej. Juan Pérez" required autocomplete="name">
+                    </div>
+                    <span class="error-msg" id="nombreError"></span>
+                </div>
+
+                <!-- Cédula -->
+                <div class="form-group">
+                    <label for="cedula">Cédula de Identidad</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-address-card input-icon"></i>
+                        <input type="text" id="cedula" name="cedula" placeholder="Ej. V-12345678" required>
+                    </div>
+                    <span class="error-msg" id="cedulaError"></span>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="form-group">
+                    <label for="telefono">Número de Teléfono del Contrato</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-phone input-icon"></i>
+                        <input type="tel" id="telefono" name="telefono" placeholder="Ej. 04141234567" required autocomplete="tel">
+                    </div>
+                    <span class="error-msg" id="telefonoError"></span>
+                </div>
+
+                <!-- Referencia -->
+                <div class="form-group">
+                    <label for="referencia">Número de Referencia (Últimos 4 o 6 dígitos)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-receipt input-icon"></i>
+                        <input type="text" id="referencia" name="referencia" placeholder="Ej. 9876" required>
+                    </div>
+                    <span class="error-msg" id="referenciaError"></span>
+                </div>
+
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span class="btn-text">Enviar Reporte de Pago</span>
+                    <i class="fa-solid fa-paper-plane btn-icon"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- Success State -->
+        <div class="card success-card" id="successCard" style="display: none;">
+            <div class="success-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h2>¡Pago Reportado Exitosamente!</h2>
+            <p>Hemos recibido la información y el comprobante de tu pago. Nuestro equipo validará el reporte en la brevedad posible para mantener activo tu servicio.</p>
+            <div class="summary-details">
+                <div class="summary-item">
+                    <span>Cliente:</span>
+                    <strong id="successClient">Juan Pérez</strong>
+                </div>
+                <div class="summary-item">
+                    <span>Referencia:</span>
+                    <strong id="successRef">#9876</strong>
+                </div>
+            </div>
+            <button type="button" class="action-btn" id="resetBtn">Reportar otro pago</button>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+            <div class="spinner"></div>
+            <p>Procesando y registrando tu pago...</p>
+        </div>
+    </div>
+
+    <!-- Script connection -->
+    <script src="app.js"></script>
+</body>
+</html>
