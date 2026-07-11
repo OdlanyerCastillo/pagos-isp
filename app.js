@@ -3,8 +3,7 @@
  * Connects frontend form to Google Apps Script Backend
  */
 
-// Replace this with your Google Apps Script Web App URL after deploying it
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_XXXXXXXXXXXXXX/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsR7608BCGO-36DEvoafpvud66E-lEJVzWGmwtQXeaZN6JY2HOsFHKWiOGZnM1bp8T/exec';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Form and Card Selectors
