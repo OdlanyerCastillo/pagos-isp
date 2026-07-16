@@ -71,12 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     capturaInput.addEventListener('change', function(e) {
         const file = this.files[0];
         if (file) {
-            if (file.size > 5 * 1024 * 1024) {
-                showInputError(capturaInput, capturaError, '❌ La imagen no debe superar los 5MB.');
-                this.value = '';
-                imagePreview.style.display = 'none';
-                return;
-            }
+            // Size limit removed: previously checked file.size > 5 MB
             if (!file.type.startsWith('image/')) {
                 showInputError(capturaInput, capturaError, '❌ Solo se permiten archivos de imagen (JPG, PNG).');
                 this.value = '';
@@ -172,7 +167,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 mode: 'cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                headers: { 
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json'
+                },
                 body: JSON.stringify(payload)
             });
             const result = await response.json();
