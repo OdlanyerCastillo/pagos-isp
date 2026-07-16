@@ -138,8 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const cedula = cedulaInput.value.trim();
         const telefono = telefonoInput.value.trim().replace(/\D/g, '');
         const referencia = referenciaInput.value.trim();
-        const sector = sectorSelect.value;
-        const corte = corteSelect.value;
+        const sector = sectorSelect.value || '';
+        const corte = corteSelect.value || '';
         const file = capturaInput.files[0];
 
         // Generar nombre de archivo: pago_[referencia]_[nombre_limpio]
@@ -149,7 +149,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const extension = file.name.split('.').pop();
         const nombreArchivo = `pago_${referencia}_${nombreLimpio}.${extension}`;
 
-        const payload = { cedula, telefono, referencia, nombre, sector, corte, imageName: nombreArchivo };
+        const payload = {
+            cedula,
+            telefono,
+            referencia,
+            nombre,
+            sector,
+            corte,
+            imageName: nombreArchivo
+        };
+        console.log('Payload fields:', { cedula, telefono, referencia, nombre, sector, corte, imageName: nombreArchivo });
 
         try {
             const reader = new FileReader();
@@ -164,15 +173,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('La URL de Google Apps Script no está configurada.');
             }
 
-            const response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                mode: 'cors',
-                headers: { 
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            });
+            console.log('Payload enviado:', payload);
+const response = await fetch(SCRIPT_URL, {
+  method: 'POST',
+  mode: 'cors',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  },
+  body: JSON.stringify(payload)
+});
             const result = await response.json();
 
             if (result.status === 'success') {

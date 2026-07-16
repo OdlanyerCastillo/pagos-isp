@@ -102,7 +102,8 @@ function doPost(e) {
     }
     
     var data = JSON.parse(e.postData.contents);
-    
+    Logger.log('Received payload:');
+    Logger.log(data);
     var cedula = data.cedula;
     var telefono = data.telefono;
     var referencia = data.referencia;
