@@ -166,7 +166,8 @@ label {
 }
 
 input[type="text"],
-input[type="tel"] {
+input[type="tel"],
+select {
     width: 100%;
     background-color: var(--input-bg);
     border: 1px solid var(--input-border);
@@ -179,15 +180,34 @@ input[type="tel"] {
     transition: var(--transition);
 }
 
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%23f3f4f6' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 20px;
+    padding-right: 40px !important;
+    cursor: pointer;
+}
+
+select option {
+    background-color: #0d131f;
+    color: var(--text-main);
+}
+
 input[type="text"]:focus,
-input[type="tel"]:focus {
+input[type="tel"]:focus,
+select:focus {
     border-color: var(--input-focus);
     background-color: rgba(15, 23, 42, 0.85);
     box-shadow: 0 0 15px var(--primary-glow);
 }
 
 input[type="text"]:focus + .input-icon,
-input[type="tel"]:focus + .input-icon {
+input[type="tel"]:focus + .input-icon,
+select:focus + .input-icon {
     color: var(--input-focus);
 }
 
@@ -200,7 +220,8 @@ input[type="tel"]:focus + .input-icon {
     font-weight: 500;
 }
 
-.form-group.has-error input {
+.form-group.has-error input,
+.form-group.has-error select {
     border-color: var(--error-color);
 }
 
@@ -395,7 +416,8 @@ input[type="tel"]:focus + .input-icon {
         font-size: 1.3rem;
     }
     input[type="text"],
-    input[type="tel"] {
+    input[type="tel"],
+    select {
         padding: 12px 14px 12px 42px;
         font-size: 0.9rem;
     }
