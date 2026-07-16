@@ -147,9 +147,6 @@ function doPost(e) {
     
     if (base64Image) {
       var decodedImage = Utilities.base64Decode(base64Image);
-      if (decodedImage.length > 5 * 1024 * 1024) {
-        throw new Error("❌ La imagen supera los 5MB permitidos.");
-      }
       
       var folderName = "Comprobantes de Pago ISP";
       var folder;
