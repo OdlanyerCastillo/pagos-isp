@@ -75,13 +75,19 @@ function doGet(e) {
         mes: sheet.getName(),
         totalRegistros: jsonData.length
       }
-    })).setMimeType(ContentService.MimeType.JSON);
+    })).setMimeType(ContentService.MimeType.JSON)
+       .setHeader('Access-Control-Allow-Origin', '*')
+       .setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+       .setHeader('Access-Control-Allow-Headers', 'Content-Type');
     
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({
       status: "error",
       message: error.toString()
-    })).setMimeType(ContentService.MimeType.JSON);
+    })).setMimeType(ContentService.MimeType.JSON)
+       .setHeader('Access-Control-Allow-Origin', '*')
+       .setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+       .setHeader('Access-Control-Allow-Headers', 'Content-Type');
   }
 }
 
@@ -157,9 +163,14 @@ function doPost(e) {
         folder = DriveApp.createFolder(folderName);
       }
       
-      var mimeType = "image/png";
-      if (imageName.endsWith(".jpg") || imageName.endsWith(".jpeg")) {
+      var mimeType = file.type || "image/png";
+      if (mimeType === "image/jpeg" || mimeType === "image/jpg") {
         mimeType = "image/jpeg";
+      } else if (mimeType === "image/png") {
+        mimeType = "image/png";
+      } else {
+        // Fallback for other image types (e.g., HEIC) treat as PNG to ensure compatibility
+        mimeType = "image/png";
       }
       
       var blob = Utilities.newBlob(decodedImage, mimeType, imageName);
@@ -185,19 +196,29 @@ function doPost(e) {
       status: "success",
       message: "✅ El pago se ha registrado correctamente en " + nombreHoja,
       row: sheet.getLastRow()
-    })).setMimeType(ContentService.MimeType.JSON);
+    })).setMimeType(ContentService.MimeType.JSON)
+       .setHeader('Access-Control-Allow-Origin', '*')
+       .setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+       .setHeader('Access-Control-Allow-Headers', 'Content-Type');
     
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({
       status: "error",
       message: error.toString()
-    })).setMimeType(ContentService.MimeType.JSON);
+    })).setMimeType(ContentService.MimeType.JSON)
+       .setHeader('Access-Control-Allow-Origin', '*')
+       .setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+       .setHeader('Access-Control-Allow-Headers', 'Content-Type');
   }
+
+function doOptions(e) {
+  return ContentService.createTextOutput('')
+    .setMimeType(ContentService.MimeType.JSON)
+    .setHeader('Access-Control-Allow-Origin', '*')
+    .setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+    .setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
 }
 
-// =============================================
-// Función para listar meses disponibles
-// =============================================
 
 function doGetMonths() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();

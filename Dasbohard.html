@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Pagos - ISP</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #080b11;
+            color: #f3f4f6;
+            padding: 24px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(to right, #3b82f6, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .header-actions select,
+        .header-actions input {
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(15, 23, 42, 0.6);
+            color: #f3f4f6;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .header-actions select:focus,
+        .header-actions input:focus {
+            border-color: #3b82f6;
+        }
+        .btn-refresh {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, #3b82f6, #a855f7);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-refresh:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        /* Metrics Cards */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .metric-card {
+            background: rgba(17, 25, 40, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+        .metric-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+        }
+        .metric-card .label {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+        .metric-card .icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        .metric-card.blue .icon { color: #3b82f6; }
+        .metric-card.green .icon { color: #10b981; }
+        .metric-card.purple .icon { color: #a855f7; }
+        .metric-card.orange .icon { color: #f59e0b; }
+        /* Charts */
+        .charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        .chart-box {
+            background: rgba(17, 25, 40, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        .chart-box h3 {
+            font-size: 1rem;
+            color: #9ca3af;
+            margin-bottom: 12px;
+        }
+        /* Table */
+        .table-wrapper {
+            background: rgba(17, 25, 40, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+        .table-wrapper h3 {
+            margin-bottom: 16px;
+            color: #9ca3af;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th {
+            text-align: left;
+            padding: 12px 8px;
+            color: #9ca3af;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        tr:hover td {
+            background: rgba(255,255,255,0.03);
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-guachara { background: #3b82f6; color: white; }
+        .badge-yagual { background: #a855f7; color: white; }
+        .badge-15 { background: #10b981; color: white; }
+        .badge-30 { background: #f59e0b; color: black; }
+        .link-drive {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        .link-drive:hover {
+            text-decoration: underline;
+        }
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+            display: block;
+            margin-bottom: 12px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+        .empty i {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+        /* Filtros */
+        .filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .filters input, .filters select {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(15, 23, 42, 0.6);
+            color: #f3f4f6;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+            min-width: 140px;
+        }
+        .filters input:focus, .filters select:focus {
+            border-color: #3b82f6;
+        }
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .header-actions {
+                flex-direction: column;
+            }
+            .metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1><i class="fa-solid fa-chart-pie"></i> Dashboard de Pagos</h1>
+            <div class="header-actions">
+                <select id="monthSelector">
+                    <option value="">Cargando meses...</option>
+                </select>
+                <input type="text" id="searchInput" placeholder="🔍 Buscar (ref, nombre, cédula)">
+                <button class="btn-refresh" id="refreshBtn"><i class="fa-solid fa-rotate"></i> Actualizar</button>
+            </div>
+        </div>
+
+        <!-- METRICS -->
+        <div class="metrics" id="metricsContainer">
+            <div class="metric-card blue">
+                <div class="icon"><i class="fa-solid fa-receipt"></i></div>
+                <div class="value" id="totalPagos">-</div>
+                <div class="label">Total Pagos</div>
+            </div>
+            <div class="metric-card green">
+                <div class="icon"><i class="fa-solid fa-check-circle"></i></div>
+                <div class="value" id="pagosHoy">-</div>
+                <div class="label">Pagos de Hoy</div>
+            </div>
+            <div class="metric-card purple">
+                <div class="icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                <div class="value" id="pagosGuachara">-</div>
+                <div class="label">Guachara</div>
+            </div>
+            <div class="metric-card orange">
+                <div class="icon"><i class="fa-solid fa-tree"></i></div>
+                <div class="value" id="pagosYagual">-</div>
+                <div class="label">El Yagual</div>
+            </div>
+        </div>
+
+        <!-- CHARTS -->
+        <div class="charts">
+            <div class="chart-box">
+                <h3>📊 Pagos por Sector</h3>
+                <canvas id="chartSector"></canvas>
+            </div>
+            <div class="chart-box">
+                <h3>📊 Pagos por Día de Corte</h3>
+                <canvas id="chartCorte"></canvas>
+            </div>
+        </div>
+
+        <!-- FILTERS & TABLE -->
+        <div class="table-wrapper">
+            <h3>📋 Registros de Pagos</h3>
+            <div class="filters">
+                <select id="filterSector">
+                    <option value="">Todos los sectores</option>
+                    <option value="Guachara">Guachara</option>
+                    <option value="El Yagual">El Yagual</option>
+                </select>
+                <select id="filterCorte">
+                    <option value="">Todos los días de corte</option>
+                    <option value="Día 15">Día 15</option>
+                    <option value="Día 30">Día 30</option>
+                </select>
+            </div>
+            <div id="tableContainer">
+                <div class="loading"><i class="fa-solid fa-spinner"></i> Cargando datos...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============================================
+        // CONFIGURACIÓN
+        // =============================================
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsR7608BCGO-36DEvoafpvud66E-lEJVzWGmwtQXeaZN6JY2HOsFHKWiOGZnM1bp8T/exec';
+        let allData = [];
+        let chartSector, chartCorte;
+
+        // =============================================
+        // OBTENER MESES DISPONIBLES
+        // =============================================
+        async function loadMonths() {
+            try {
+                const res = await fetch(SCRIPT_URL + '?action=months');
+                const json = await res.json();
+                const select = document.getElementById('monthSelector');
+                select.innerHTML = '';
+                if (json.status === 'success' && json.months.length > 0) {
+                    json.months.forEach(m => {
+                        const opt = document.createElement('option');
+                        opt.value = m;
+                        opt.textContent = m;
+                        select.appendChild(opt);
+                    });
+                } else {
+                    // Si no hay meses, usar el mes actual
+                    const now = new Date();
+                    const monthNames = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+                    const current = monthNames[now.getMonth()] + '-' + now.getFullYear();
+                    const opt = document.createElement('option');
+                    opt.value = current;
+                    opt.textContent = current;
+                    select.appendChild(opt);
+                }
+            } catch (e) {
+                console.error('Error cargando meses:', e);
+            }
+        }
+
+        // =============================================
+        // OBTENER DATOS DEL MES SELECCIONADO
+        // =============================================
+        async function loadData(mes) {
+            const container = document.getElementById('tableContainer');
+            container.innerHTML = '<div class="loading"><i class="fa-solid fa-spinner"></i> Cargando datos...</div>';
+            
+            try {
+                const url = SCRIPT_URL + '?mes=' + encodeURIComponent(mes);
+                const res = await fetch(url);
+                const json = await res.json();
+                
+                if (json.status === 'error') {
+                    container.innerHTML = '<div class="empty"><i class="fa-solid fa-triangle-exclamation"></i><p>Error: ' + json.message + '</p></div>';
+                    return;
+                }
+                
+                if (json.status === 'empty' || !json.data || json.data.length === 0) {
+                    container.innerHTML = '<div class="empty"><i class="fa-regular fa-folder-open"></i><p>No hay registros para este mes.</p></div>';
+                    allData = [];
+                    updateMetrics([]);
+                    updateCharts([]);
+                    return;
+                }
+                
+                allData = json.data;
+                renderTable(allData);
+                updateMetrics(allData);
+                updateCharts(allData);
+                
+            } catch (e) {
+                container.innerHTML = '<div class="empty"><i class="fa-solid fa-triangle-exclamation"></i><p>Error al cargar los datos: ' + e.message + '</p></div>';
+            }
+        }
+
+        // =============================================
+        // RENDERIZAR TABLA
+        // =============================================
+        function renderTable(data) {
+            const container = document.getElementById('tableContainer');
+            
+            // Aplicar filtros
+            const sectorFilter = document.getElementById('filterSector').value;
+            const corteFilter = document.getElementById('filterCorte').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filtered = data.filter(row => {
+                const sector = row['Sector / Zona'] || '';
+                const corte = row['Día de Corte'] || '';
+                const ref = (row['Número de Referencia'] || '').toString();
+                const nombre = (row['Nombre y Apellido'] || '').toLowerCase();
+                const cedula = (row['Cédula Propietario'] || '').toLowerCase();
+                
+                if (sectorFilter && sector !== sectorFilter) return false;
+                if (corteFilter && corte !== corteFilter) return false;
+                if (searchTerm) {
+                    const match = ref.includes(searchTerm) || 
+                                  nombre.includes(searchTerm) || 
+                                  cedula.includes(searchTerm);
+                    if (!match) return false;
+                }
+                return true;
+            });
+            
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty"><i class="fa-regular fa-folder-open"></i><p>No hay registros que coincidan con los filtros.</p></div>';
+                return;
+            }
+            
+            let html = `<table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Nombre</th>
+                        <th>Cédula</th>
+                        <th>Teléfono</th>
+                        <th>Sector</th>
+                        <th>Día de Corte</th>
+                        <th>Referencia</th>
+                        <th>Captura</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+            
+            filtered.forEach(row => {
+                const fecha = row['Fecha/Hora Registro'] || '';
+                const nombre = row['Nombre y Apellido'] || '';
+                const cedula = row['Cédula Propietario'] || '';
+                const telefono = row['Teléfono Propietario'] || '';
+                const sector = row['Sector / Zona'] || '';
+                const corte = row['Día de Corte'] || '';
+                const ref = row['Número de Referencia'] || '';
+                const link = row['Enlace de Captura (Drive)'] || '';
+                
+                const sectorClass = sector === 'Guachara' ? 'badge-guachara' : 'badge-yagual';
+                const corteClass = corte === 'Día 15' ? 'badge-15' : 'badge-30';
+                
+                html += `<tr>
+                    <td>${fecha}</td>
+                    <td>${nombre}</td>
+                    <td>${cedula}</td>
+                    <td>${telefono}</td>
+                    <td><span class="badge ${sectorClass}">${sector}</span></td>
+                    <td><span class="badge ${corteClass}">${corte}</span></td>
+                    <td><strong>${ref}</strong></td>
+                    <td>${link !== 'No se cargó imagen' ? `<a href="${link}" target="_blank" class="link-drive"><i class="fa-regular fa-image"></i> Ver</a>` : '—'}</td>
+                </tr>`;
+            });
+            
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        }
+
+        // =============================================
+        // ACTUALIZAR MÉTRICAS
+        // =============================================
+        function updateMetrics(data) {
+            const total = data.length;
+            const hoy = new Date().toDateString();
+            const pagosHoy = data.filter(row => {
+                const fecha = row['Fecha/Hora Registro'];
+                if (!fecha) return false;
+                return new Date(fecha).toDateString() === hoy;
+            }).length;
+            
+            const guachara = data.filter(row => (row['Sector / Zona'] || '') === 'Guachara').length;
+            const yagual = data.filter(row => (row['Sector / Zona'] || '') === 'El Yagual').length;
+            
+            document.getElementById('totalPagos').textContent = total;
+            document.getElementById('pagosHoy').textContent = pagosHoy;
+            document.getElementById('pagosGuachara').textContent = guachara;
+            document.getElementById('pagosYagual').textContent = yagual;
+        }
+
+        // =============================================
+        // ACTUALIZAR GRÁFICOS
+        // =============================================
+        function updateCharts(data) {
+            // Por sector
+            const guachara = data.filter(row => (row['Sector / Zona'] || '') === 'Guachara').length;
+            const yagual = data.filter(row => (row['Sector / Zona'] || '') === 'El Yagual').length;
+            
+            // Por día de corte
+            const dia15 = data.filter(row => (row['Día de Corte'] || '') === 'Día 15').length;
+            const dia30 = data.filter(row => (row['Día de Corte'] || '') === 'Día 30').length;
+            
+            // Sector Chart
+            if (chartSector) chartSector.destroy();
+            chartSector = new Chart(document.getElementById('chartSector'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Guachara', 'El Yagual'],
+                    datasets: [{
+                        data: [guachara, yagual],
+                        backgroundColor: ['#3b82f6', '#a855f7'],
+                        borderColor: ['#1e293b', '#1e293b'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { labels: { color: '#f3f4f6' } }
+                    }
+                }
+            });
+            
+            // Corte Chart
+            if (chartCorte) chartCorte.destroy();
+            chartCorte = new Chart(document.getElementById('chartCorte'), {
+                type: 'bar',
+                data: {
+                    labels: ['Día 15', 'Día 30'],
+                    datasets: [{
+                        label: 'Pagos',
+                        data: [dia15, dia30],
+                        backgroundColor: ['#10b981', '#f59e0b'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#9ca3af' },
+                            grid: { color: 'rgba(255,255,255,0.05)' }
+                        },
+                        x: {
+                            ticks: { color: '#9ca3af' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // =============================================
+        // EVENTOS
+        // =============================================
+        document.getElementById('monthSelector').addEventListener('change', function() {
+            if (this.value) loadData(this.value);
+        });
+        
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+            const mes = document.getElementById('monthSelector').value;
+            if (mes) loadData(mes);
+        });
+        
+        document.getElementById('searchInput').addEventListener('input', function() {
+            if (allData.length > 0) renderTable(allData);
+        });
+        
+        document.getElementById('filterSector').addEventListener('change', function() {
+            if (allData.length > 0) renderTable(allData);
+        });
+        
+        document.getElementById('filterCorte').addEventListener('change', function() {
+            if (allData.length > 0) renderTable(allData);
+        });
+
+        // =============================================
+        // INICIALIZAR
+        // =============================================
+        async function init() {
+            await loadMonths();
+            const select = document.getElementById('monthSelector');
+            if (select.options.length > 0) {
+                const mes = select.value;
+                await loadData(mes);
+            }
+        }
+        
+        init();
+    </script>
+</body>
+</html>
