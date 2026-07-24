@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* (Mismo estilo que antes, solo agregaremos un pequeño ajuste para el input de monto) */
         :root {
             --bg-color: #080b11;
             --card-bg: rgba(17, 25, 40, 0.65);
@@ -85,7 +86,7 @@
         label { display: block; font-size: 0.9rem; font-weight: 500; margin-bottom: 8px; color: #e5e7eb; }
         .input-wrapper { position: relative; display: flex; align-items: center; }
         .input-icon { position: absolute; left: 16px; color: var(--text-muted); font-size: 1.1rem; transition: var(--transition); }
-        input[type="text"], input[type="tel"], select {
+        input[type="text"], input[type="tel"], input[type="number"], select {
             width: 100%;
             background-color: var(--input-bg);
             border: 1px solid var(--input-border);
@@ -176,7 +177,6 @@
             .input-icon { left: 14px; font-size: 1rem; }
             .submit-btn { padding: 14px 16px; }
         }
-        /* Estilos para el input file */
         .file-input-wrapper {
             position: relative;
             padding: 8px 16px;
@@ -287,6 +287,16 @@
                     <span class="error-msg" id="referenciaError"></span>
                 </div>
 
+                <!-- NUEVO CAMPO: MONTO -->
+                <div class="form-group">
+                    <label for="monto">Monto del Pago (Bs.)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-money-bill-wave input-icon"></i>
+                        <input type="number" id="monto" name="monto" placeholder="Ej. 150.00" step="0.01" min="0" required>
+                    </div>
+                    <span class="error-msg" id="montoError"></span>
+                </div>
+
                 <!-- CAPTURA DE PANTALLA -->
                 <div class="form-group">
                     <label for="captura">Captura de Pantalla del Pago</label>
@@ -313,6 +323,7 @@
             <div class="summary-details">
                 <div class="summary-item"><span>Cliente:</span><strong id="successClient">Juan Pérez</strong></div>
                 <div class="summary-item"><span>Referencia:</span><strong id="successRef">#9876</strong></div>
+                <div class="summary-item"><span>Monto:</span><strong id="successMonto">Bs. 0.00</strong></div>
             </div>
             <button type="button" class="action-btn" id="resetBtn">Reportar otro pago</button>
         </div>
