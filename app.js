@@ -3,7 +3,7 @@
  */
 
 // 🔽 CAMBIA ESTA URL POR LA TUYA DESPUÉS DE DESPLEGAR EN APPS SCRIPT
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbziJs70jdDo71ON5kYm24S1d0w7_mT4_k5GnlaIhO11QlGu__iac9usblgLryFujJAq/exec';
+const SCRIPT_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnRTapON7ZOuHXDnmR9HDLWxerIotZbLsWrUz07iihyESsw1bTUd-Bkj9v_m667FPlUcRKZ4jxYA_oidFtoeLwLh3FW-kzy6oAW60LxmXODi9xyTa3xyRtK1Xz5lrTZ98bcDCt8O-9omfB64zrh_3d_V3LGXbOlX6LUDC5HIgssCgmyfxpDmgssugkHa5OruaHLiVio_zUofHTjFTvKDwqzwVXl-lKjLFtO0t9NfBoso8SzJjvbzJ-RQTXLwFuLxK9F18QNQN5a5xlgxOQ3Rxt5SLOShIQ&lib=MAJcfWc39lchu_MPx1VAjV3cgE7KRzIh7';
 
 document.addEventListener('DOMContentLoaded', () => {
     const paymentForm = document.getElementById('paymentForm');
