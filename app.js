@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const sectorSelect = document.getElementById("sector");
   const corteSelect = document.getElementById("corte");
   const referenciaInput = document.getElementById("referencia");
-  const montoInput = document.getElementById("monto"); // NUEVO
+  const montoInput = document.getElementById("monto");
   const capturaInput = document.getElementById("captura");
 
   const nombreError = document.getElementById("nombreError");
@@ -27,12 +27,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const sectorError = document.getElementById("sectorError");
   const corteError = document.getElementById("corteError");
   const referenciaError = document.getElementById("referenciaError");
-  const montoError = document.getElementById("montoError"); // NUEVO
+  const montoError = document.getElementById("montoError");
   const capturaError = document.getElementById("capturaError");
 
   const successClient = document.getElementById("successClient");
   const successRef = document.getElementById("successRef");
-  const successMonto = document.getElementById("successMonto"); // NUEVO
+  const successMonto = document.getElementById("successMonto");
   const resetBtn = document.getElementById("resetBtn");
   const imagePreview = document.getElementById("imagePreview");
   const previewImg = document.getElementById("previewImg");
@@ -72,7 +72,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const cleaned = referenciaInput.value.replace(/\D/g, "");
     if (cleaned.length >= 4) clearInputError(referenciaInput, referenciaError);
   });
-  // Validación de monto (debe ser número positivo)
   montoInput.addEventListener("input", () => {
     const val = parseFloat(montoInput.value);
     if (!isNaN(val) && val > 0) clearInputError(montoInput, montoError);
@@ -149,7 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       isValid = false;
     } else clearInputError(referenciaInput, referenciaError);
-    // Validación de monto
     const montoVal = parseFloat(montoInput.value);
     if (isNaN(montoVal) || montoVal <= 0) {
       showInputError(
@@ -184,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const referencia = referenciaInput.value.trim();
     const sector = sectorSelect.value;
     const corte = corteSelect.value;
-    const monto = parseFloat(montoInput.value).toFixed(2); // NUEVO
+    const monto = parseFloat(montoInput.value).toFixed(2);
     const file = capturaInput.files[0];
 
     // Generar nombre de archivo: pago_[referencia]_[nombre_limpio]
@@ -205,9 +203,12 @@ document.addEventListener("DOMContentLoaded", () => {
       nombre,
       sector,
       corte,
-      monto, // NUEVO
+      monto,
       imageName: nombreArchivo,
     };
+
+    // ⭐ LOG PARA DEPURACIÓN (esto aparecerá en la consola)
+    console.log("📦 Payload enviado:", payload);
 
     try {
       const reader = new FileReader();
@@ -222,7 +223,6 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error("La URL de Google Apps Script no está configurada.");
       }
 
-      // ⭐ SOLUCIÓN CORS: Content-Type sin charset y sin mode explícito
       const response = await fetch(SCRIPT_URL, {
         method: "POST",
         headers: {
@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (result.status === "success") {
         successClient.textContent = nombre;
         successRef.textContent = `#${referencia}`;
-        successMonto.textContent = `Bs. ${monto}`; // NUEVO
+        successMonto.textContent = `Bs. ${monto}`;
         formCard.style.display = "none";
         successCard.style.display = "block";
         paymentForm.reset();
@@ -245,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(result.message || "Error desconocido.");
       }
     } catch (error) {
-      console.error("Submission Error:", error);
+      console.error("❌ Submission Error:", error);
       alert(`❌ Error al registrar el pago: ${error.message}`);
     } finally {
       loadingOverlay.style.display = "none";
